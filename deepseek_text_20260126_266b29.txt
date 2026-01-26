@@ -1,0 +1,12 @@
+cyberpunk-blockchain-monitor/
+│
+├── index.html
+├── css/
+│   ├── style.css
+│   └── animations.css
+├── js/
+│   ├── main.js
+│   ├── blockchain-simulator.js
+│   └── cube-3d.js
+└── assets/
+    └── (будут создаваться динамически)
