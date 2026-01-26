@@ -7,6 +7,12 @@ const statusText = document.getElementById('status-text');
 const systemStatus = document.getElementById('system-status');
 const pauseBtn = document.getElementById('pause-btn');
 const glitchBtn = document.getElementById('glitch-btn');
+const appState = {
+    get isPaused() { return isPaused; },
+    get glitchMode() { return glitchMode; }
+};
+
+window.appState = appState;
 
 // Инициализация приложения
 function init() {
@@ -33,6 +39,7 @@ function init() {
         glitchMode = !glitchMode;
         glitchBtn.textContent = glitchMode ? 'НОРМАЛЬНЫЙ РЕЖИМ' : 'ГЛИТЧ';
         glitchBtn.style.borderColor = glitchMode ? 'var(--neon-pink)' : 'var(--neon-blue)';
+        document.body.classList.toggle('glitch-mode', glitchMode);
         
         if (glitchMode) {
             statusText.textContent = 'РЕЖИМ ГЛИТЧ АКТИВИРОВАН';

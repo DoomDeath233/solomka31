@@ -1,0 +1,115 @@
+/* Анимации и эффекты */
+
+.glitch {
+    position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.glitch::before {
+    color: var(--neon-pink);
+    transform: translate(2px, -2px);
+    opacity: 0.7;
+    animation: glitch-shift 2.4s infinite;
+}
+
+.glitch::after {
+    color: var(--neon-blue);
+    transform: translate(-2px, 2px);
+    opacity: 0.6;
+    animation: glitch-shift 1.8s infinite reverse;
+}
+
+.glitch-mode .glitch::before,
+.glitch-mode .glitch::after {
+    animation-duration: 0.9s;
+}
+
+@keyframes glitch-shift {
+    0% { clip-path: inset(0 0 0 0); }
+    20% { clip-path: inset(10% 0 70% 0); }
+    40% { clip-path: inset(50% 0 20% 0); }
+    60% { clip-path: inset(20% 0 50% 0); }
+    80% { clip-path: inset(70% 0 10% 0); }
+    100% { clip-path: inset(0 0 0 0); }
+}
+
+.scanline {
+    animation: scanline-move 8s linear infinite;
+}
+
+@keyframes scanline-move {
+    0% { transform: translateY(-10px); }
+    100% { transform: translateY(100vh); }
+}
+
+.pulse {
+    animation: pulse-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+header::before {
+    animation: header-scan 6s linear infinite;
+}
+
+@keyframes header-scan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.particle {
+    bottom: -10px;
+    animation: particle-rise 14s linear infinite;
+}
+
+@keyframes particle-rise {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+.stream {
+    animation: stream-fall 18s linear infinite;
+}
+
+@keyframes stream-fall {
+    0% { transform: translateY(-120px); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(110vh); opacity: 0; }
+}
+
+.cube-container {
+    animation: cube-spin 18s linear infinite;
+}
+
+@keyframes cube-spin {
+    0% { transform: rotateX(-15deg) rotateY(30deg); }
+    50% { transform: rotateX(-10deg) rotateY(210deg); }
+    100% { transform: rotateX(-15deg) rotateY(390deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scanline,
+    .particle,
+    .stream,
+    .cube-container,
+    .glitch::before,
+    .glitch::after,
+    .pulse,
+    header::before {
+        animation: none;
+    }
+}
