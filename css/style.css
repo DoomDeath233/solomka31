@@ -316,7 +316,19 @@ h1 {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(-15deg) rotateY(30deg);
+
+    /* ВАЖНО */
+    transform-origin: 50% 50%;
+    animation: rotateCube 20s linear infinite;
+}
+
+@keyframes rotateCube {
+    0% {
+        transform: rotateX(0deg) rotateY(0deg);
+    }
+    100% {
+        transform: rotateX(0deg) rotateY(360deg);
+    }
 }
 
 .cube-face {
