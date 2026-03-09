@@ -3,81 +3,760 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>КИБЕРПАНК БЛОКЧЕЙН МОНИТОР</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
+    <title>ETH МАТРИЦА • БЛОКЧЕЙН МОНИТОР</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;900&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Source Code Pro', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* Фон с полупрозрачной 3D монетой ETH */
+        .eth-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .eth-coin-left {
+            left: calc(50% - 300px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .eth-coin-right {
+            left: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+                
+        .coin-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateVertical 15s infinite linear;
+        }
+        
+        /* Анимация вращения только по вертикали */
+        @keyframes rotateVertical {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+        
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: visible;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 50px #00ff00, inset 0 0 50px #00ff00;
+            background: rgba(0, 20, 0, 0.15);
+            backdrop-filter: blur(3px);
+        }
+        
+        .coin-face-front {
+            transform: translateZ(20px);
+        }
+        
+        .coin-face-back {
+            transform: rotateY(180deg) translateZ(20px);
+        }
+        
+        .coin-face::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            border: 2px solid #00ff00;
+            opacity: 0.5;
+        }
+        
+        .coin-face::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            border: 2px solid #00ff00;
+            opacity: 0.3;
+        }
+        
+        .eth-symbol {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
+            transform: rotate(0deg);
+            animation: symbolGlow 3s ease-in-out infinite;
+        }
+        
+        .eth-symbol small {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+        
+        @keyframes symbolGlow {
+            0%, 100% { text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; opacity: 1; }
+            50% { text-shadow: 0 0 50px #00ff00, 0 0 100px #00ff00; opacity: 0.9; }
+        }
+        
+        /* Сканирующая линия */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to bottom, transparent, #00ff00, #00ff00, transparent);
+            opacity: 0.3;
+            animation: scan 6s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+            box-shadow: 0 0 30px #00ff00;
+        }
+        
+        @keyframes scan {
+            0% { top: -10px; }
+            100% { top: 110%; }
+        }
+        
+        /* Основной контейнер */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Заголовок */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+            border: 2px solid #00ff00;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+        
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        
+        /* Статус бар */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            border: 2px solid #00ff00;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff00;
+            margin-right: 10px;
+            box-shadow: 0 0 20px #00ff00;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        /* Статистика */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #aaffaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ff00;
+            text-shadow: 0 0 15px #00ff00;
+        }
+        
+        /* Основной ряд с кубом и терминалом */
+        .main-row {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+        
+        /* Терминал слева */
+        .terminal {
+            flex: 1;
+            height: 400px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 30px #00ff00;
+            overflow: hidden;
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #00ff00;
+            color: #00ff00;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .terminal-content {
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff00 #001100;
+        }
+        
+        .terminal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .terminal-content::-webkit-scrollbar-track {
+            background: #001100;
+            border: 1px solid #00ff00;
+        }
+        
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .terminal-line {
+            font-size: 0.8rem;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            font-family: 'Source Code Pro', monospace;
+            border-left: 2px solid #00ff00;
+            padding-left: 10px;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Куб справа */
+            .cube-section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transform: translateX(-20px); /* сдвиг влево */
+            }
+        
+        .cube-wrapper {
+            perspective: 1000px;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 15s infinite linear;
+        }
+        
+        /* Анимация вращения куба только по вертикали */
+        @keyframes rotateCube {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+        
+        .cube-face {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border: 2px solid #00ff00;
+            background: rgba(0, 20, 0, 0.3);
+            backdrop-filter: blur(2px);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            padding: 2px;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .cube-face-front { transform: translateZ(125px); }
+        .cube-face-back { transform: rotateY(180deg) translateZ(125px); }
+        .cube-face-right { transform: rotateY(90deg) translateZ(125px); }
+        .cube-face-left { transform: rotateY(-90deg) translateZ(125px); }
+        .cube-face-top { transform: rotateX(90deg) translateZ(125px); }
+        .cube-face-bottom { transform: rotateX(-90deg) translateZ(125px); }
+        
+        .cell {
+            border: 1px solid #00ff00;
+            background: rgba(0, 30, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            font-size: 0.6rem;
+        }
+        
+        .cell-hash {
+            font-size: 0.5rem;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .cell-value {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 8px #00ff00;
+        }
+        
+        .cell-details {
+            font-size: 0.4rem;
+            color: #aaffaa;
+        }
+        
+        /* Нижний статус */
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px #00ff00;
+            color: #00ff00;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 900px) {
+            .main-row {
+                flex-direction: column;
+            }
+            
+            .terminal {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .eth-coin-left, .eth-coin-right {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .eth-symbol {
+                font-size: 2.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .eth-coin-left, .eth-coin-right {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+<script type="text/javascript" nonce="08a7565a0e7245c5ac324d10b67" src="//local.adguard.org?ts=1771922210523&amp;type=content-script&amp;dmn=cdn.discordapp.com&amp;url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F1239954705115774998%2F1475482725979783168%2Fdeepseek_html_20260223_f03f97.html%3Fex%3D699e4e9f%26is%3D699cfd1f%26hm%3D65c3c1d81a747332e8b7a6ff4cde4070fec440fc5644160eb60c62e1c4da0f64%26&amp;app=browser.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="08a7565a0e7245c5ac324d10b67" src="//local.adguard.org?ts=1771922210523&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
-    <!-- Анимированный фон -->
-    <div class="cyber-background">
-        <div class="grid-lines"></div>
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
+    <!-- Фон с 3D монетами ETH -->
+    <div class="eth-background">
+        <!-- Левая монета -->
+        <div class="eth-coin-left">
+            <div class="coin-3d">
+                <div class="coin-face coin-face-front">
+                    <div class="eth-symbol">Ξ<small>ETH</small></div>
+                </div>
+            </div>
         </div>
-        <div class="particles" id="particles-container"></div>
-        <div class="data-stream" id="data-stream"></div>
+        
+        <!-- Правая монета -->
+        <div class="eth-coin-right">
+            <div class="coin-3d">
+                <div class="coin-face coin-face-front">
+                    <div class="eth-symbol">Ξ<small>ETH</small></div>
+                </div>
+                <div class="coin-face coin-face-back">
+                    <div class="eth-symbol">Ξ<small>ETH</small></div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class="scanline"></div>
+    <!-- Сканирующая линия -->
+    <div class="scan-line"></div>
     
     <div class="container">
-        <header>
-            <h1 class="glitch" data-text="ETHEREUM BLOCKCHAIN MONITOR">ETHEREUM BLOCKCHAIN MONITOR</h1>
-            <p class="subtitle">РЕАЛЬНОЕ ВРЕМЯ • КИБЕРПРОСТРАНСТВО • ДЕЦЕНТРАЛИЗАЦИЯ</p>
-        </header>
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>Ξ ETHEREUM МАТРИЦА</h1>
+            <div class="subtitle">БЛОКЧЕЙН МОНИТОР РЕАЛЬНОГО ВРЕМЕНИ</div>
+        </div>
         
-        <div class="dashboard">
-            <div class="stats-panel">
-                <div class="status-bar">
-                    <div class="status-item">
-                        <span class="pulse"></span>
-                        <span id="status-text">ПОДКЛЮЧЕНИЕ К СЕТИ ETHEREUM...</span>
-                    </div>
-                    <div class="status-item">
-                        <span>СИСТЕМА: <span id="system-status">АКТИВНА</span></span>
-                    </div>
+        <!-- Статус бар -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="pulse"></span>
+                <span id="status-text">СИСТЕМА АКТИВНА</span>
+            </div>
+            <div class="status-item">
+                <span>СЕТЬ: <span id="network-status">ETHEREUM</span></span>
+            </div>
+            <div class="status-item">
+                <span>БЛОКОВ: <span id="blocks-count">19.48M</span></span>
+            </div>
+            <div class="status-item">
+                <span>ГАЗ: <span id="gas-status">45 GWEI</span></span>
+            </div>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3>ТЕКУЩИЙ БЛОК</h3>
+                <div class="stat-value" id="current-block">19,483,294</div>
+            </div>
+            <div class="stat-card">
+                <h3>ТРАНЗАКЦИЙ</h3>
+                <div class="stat-value" id="total-tx">12,345</div>
+            </div>
+            <div class="stat-card">
+                <h3>СР. ГАЗ (GWEI)</h3>
+                <div class="stat-value" id="gas-price">45</div>
+            </div>
+            <div class="stat-card">
+                <h3>ВРЕМЯ</h3>
+                <div class="stat-value" id="time">22:13:45</div>
+            </div>
+        </div>
+        
+        <!-- Основной ряд: терминал слева, куб справа -->
+        <div class="main-row">
+            <!-- Терминал слева (только кошельки, суммы, комиссия, время) -->
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span>КОШЕЛЕК</span>
+                    <span>СУММА</span>
+                    <span>КОМИССИЯ</span>
+                    <span>ВРЕМЯ</span>
                 </div>
-                
-                <div class="stats">
-                    <div class="stat-card">
-                        <h3>ТЕКУЩИЙ БЛОК</h3>
-                        <div class="stat-value" id="current-block">-</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>ВСЕГО ТРАНЗАКЦИЙ</h3>
-                        <div class="stat-value" id="total-transactions">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>СРЕДНЯЯ КОМИССИЯ</h3>
-                        <div class="stat-value" id="avg-fee">-</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ</h3>
-                        <div class="stat-value" id="update-time">-</div>
-                    </div>
-                </div>
+                <div class="terminal-content" id="terminal-content"></div>
             </div>
             
+            <!-- Куб справа -->
             <div class="cube-section">
-                <div class="cube-container-wrapper">
-                    <div class="cube-container" id="cube-container">
-                        <!-- Грани куба будут сгенерированы через JavaScript -->
-                    </div>
+                <div class="cube-wrapper">
+                    <div class="cube" id="cube"></div>
                 </div>
             </div>
         </div>
         
-        <div class="controls">
-            <button class="cyber-button" id="pause-btn">ПАУЗА</button>
-            <button class="cyber-button" id="glitch-btn">ГЛИТЧ</button>
+        <!-- Нижний статус -->
+        <div class="footer">
+            <span id="footer-text">> СИСТЕМА ГОТОВА | ОЖИДАНИЕ НОВЫХ ТРАНЗАКЦИЙ</span>
         </div>
     </div>
 
-    <script src="js/cube-3d.js"></script>
-    <script src="js/blockchain-simulator.js"></script>
-    <script src="js/main.js"></script>
+    <script>
+        // Конфигурация
+        const UPDATE_INTERVAL = 3000;
+        const TERMINAL_SPEED = 800;
+        
+        // Состояние
+        let currentBlock = 19483294;
+        let totalTransactions = 12345;
+        
+        // DOM элементы
+        const cube = document.getElementById('cube');
+        const terminalContent = document.getElementById('terminal-content');
+        const statusText = document.getElementById('status-text');
+        const networkStatus = document.getElementById('network-status');
+        const blocksCount = document.getElementById('blocks-count');
+        const gasStatus = document.getElementById('gas-status');
+        const currentBlockEl = document.getElementById('current-block');
+        const totalTxEl = document.getElementById('total-tx');
+        const gasPriceEl = document.getElementById('gas-price');
+        const timeEl = document.getElementById('time');
+        const footerText = document.getElementById('footer-text');
+        
+        // Генерация адреса кошелька
+        function generateAddress() {
+            const chars = '0123456789abcdef';
+            let address = '0x';
+            for (let i = 0; i < 40; i++) {
+                address += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return address;
+        }
+        
+        // Генерация хэша транзакции
+        function generateHash() {
+            const chars = '0123456789abcdef';
+            let hash = '0x';
+            for (let i = 0; i < 64; i++) {
+                hash += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return hash;
+        }
+        
+        // Создание куба
+        function createCube() {
+            const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+            
+            faces.forEach(faceName => {
+                const face = document.createElement('div');
+                face.className = `cube-face cube-face-${faceName}`;
+                
+                for (let i = 0; i < 9; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    const hash = generateHash();
+                    const value = (Math.random() * 5).toFixed(3);
+                    const gas = Math.floor(Math.random() * 50000) + 21000;
+                    
+                    cell.innerHTML = `
+                        <div class="cell-hash">${hash.substring(0, 6)}...</div>
+                        <div class="cell-value">${value} ETH</div>
+                        <div class="cell-details">⛽ ${gas}</div>
+                    `;
+                    
+                    face.appendChild(cell);
+                }
+                
+                cube.appendChild(face);
+            });
+        }
+        
+        // Обновление данных в кубе
+        function updateCube() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const hash = generateHash();
+                const value = (Math.random() * 5).toFixed(3);
+                const gas = Math.floor(Math.random() * 50000) + 21000;
+                
+                cell.innerHTML = `
+                    <div class="cell-hash">${hash.substring(0, 6)}...</div>
+                    <div class="cell-value">${value} ETH</div>
+                    <div class="cell-details">⛽ ${gas}</div>
+                `;
+            });
+        }
+        
+        // Генерация данных для терминала (только кошелек, сумма, комиссия, время)
+        function generateTerminalData() {
+            const fromAddr = generateAddress();
+            const toAddr = generateAddress();
+            const value = (Math.random() * 10).toFixed(4);
+            const gas = Math.floor(Math.random() * 100000) + 21000;
+            const gasPrice = Math.floor(Math.random() * 100) + 20;
+            const time = new Date().toLocaleTimeString();
+            
+            return {
+                from: fromAddr.substring(0, 10) + '...',
+                to: toAddr.substring(0, 10) + '...',
+                value: value + ' ETH',
+                fee: (gas * gasPrice / 1e9).toFixed(6) + ' ETH',
+                time: time
+            };
+        }
+        
+        // Добавление строки в терминал
+        function addTerminalLine() {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            
+            const data = generateTerminalData();
+            
+            // Форматирование строки с 4 колонками
+            line.innerHTML = `
+                <span style="display: inline-block; width: 25%;">${data.from}</span>
+                <span style="display: inline-block; width: 20%;">${data.value}</span>
+                <span style="display: inline-block; width: 25%;">${data.fee}</span>
+                <span style="display: inline-block; width: 20%;">${data.time}</span>
+            `;
+            
+            terminalContent.appendChild(line);
+            
+            // Скролл вниз
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+            
+            // Удаление старых сообщений
+            if (terminalContent.children.length > 15) {
+                terminalContent.removeChild(terminalContent.firstChild);
+            }
+        }
+        
+        // Обновление статистики
+        function updateStats() {
+            currentBlock++;
+            totalTransactions += Math.floor(Math.random() * 100) + 50;
+            
+            // Форматирование чисел
+            currentBlockEl.textContent = currentBlock.toLocaleString();
+            totalTxEl.textContent = totalTransactions.toLocaleString();
+            
+            const gasValue = Math.floor(Math.random() * 30) + 35;
+            gasPriceEl.textContent = gasValue;
+            
+            blocksCount.textContent = (currentBlock / 1000000).toFixed(2) + 'M';
+            gasStatus.textContent = gasValue + ' GWEI';
+            
+            const now = new Date();
+            timeEl.textContent = now.toTimeString().split(' ')[0];
+            
+            footerText.textContent = '> НОВАЯ ТРАНЗАКЦИЯ ' + generateHash().substring(0, 10) + '...';
+        }
+        
+        // Инициализация
+        function init() {
+            createCube();
+            
+            // Первоначальное заполнение терминала
+            for (let i = 0; i < 10; i++) {
+                addTerminalLine();
+            }
+            
+            // Обновление куба и статистики
+            setInterval(() => {
+                updateCube();
+                updateStats();
+            }, UPDATE_INTERVAL);
+            
+            // Добавление сообщений в терминал
+            setInterval(addTerminalLine, TERMINAL_SPEED);
+        }
+        
+        // Запуск
+        window.onload = init;
+    </script>
 </body>
 </html>
