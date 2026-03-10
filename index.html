@@ -38,16 +38,29 @@
             pointer-events: none;
         }
 
-        .eth-coin-left {
-            left: calc(50% - 300px);
+        .eth-coin-left,
+        .eth-coin-right {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+
+        .eth-coin-left,
+        .eth-coin-right {
+            position: fixed;
             top: 50%;
             transform: translateY(-50%);
+            width: 260px;
+            height: 260px;
+            opacity: 0.25;
+        }
+
+        .eth-coin-left {
+            left: 15%;
         }
 
         .eth-coin-right {
-            left: 50%;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 15%;
         }
                 
         .coin-3d {
@@ -488,15 +501,19 @@
 <body>
     <!-- Фон с 3D монетами ETH -->
     <div class="eth-background">
+
         <!-- Левая монета -->
         <div class="eth-coin-left">
             <div class="coin-3d">
                 <div class="coin-face coin-face-front">
                     <div class="eth-symbol">Ξ<small>ETH</small></div>
                 </div>
+                <div class="coin-face coin-face-back">
+                    <div class="eth-symbol">Ξ<small>ETH</small></div>
+                </div>
             </div>
         </div>
-        
+
         <!-- Правая монета -->
         <div class="eth-coin-right">
             <div class="coin-3d">
@@ -508,6 +525,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     
     <!-- Сканирующая линия -->
