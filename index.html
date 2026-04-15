@@ -25,125 +25,7 @@
             align-items: center;
             padding: 20px;
         }
-        
-        /* Фон с полупрозрачной 3D монетой ETH */
-        .eth-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
 
-        .eth-coin-left,
-        .eth-coin-right {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-        }
-
-        .eth-coin-left,
-        .eth-coin-right {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 260px;
-            height: 260px;
-            opacity: 0.25;
-        }
-
-        .eth-coin-left {
-            left: 15%;
-        }
-
-        .eth-coin-right {
-            right: 15%;
-        }
-                
-        .coin-3d {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: rotateVertical 15s infinite linear;
-        }
-        
-        /* Анимация вращения только по вертикали */
-        @keyframes rotateVertical {
-            0% {
-                transform: rotateY(0deg);
-            }
-            100% {
-                transform: rotateY(360deg);
-            }
-        }
-        
-        .coin-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backface-visibility: visible;
-            border: 3px solid #00ff00;
-            box-shadow: 0 0 50px #00ff00, inset 0 0 50px #00ff00;
-            background: rgba(0, 20, 0, 0.15);
-            backdrop-filter: blur(3px);
-        }
-        
-        .coin-face-front {
-            transform: translateZ(20px);
-        }
-        
-        .coin-face-back {
-            transform: rotateY(180deg) translateZ(20px);
-        }
-        
-        .coin-face::before {
-            content: '';
-            position: absolute;
-            width: 80%;
-            height: 80%;
-            border-radius: 50%;
-            border: 2px solid #00ff00;
-            opacity: 0.5;
-        }
-        
-        .coin-face::after {
-            content: '';
-            position: absolute;
-            width: 60%;
-            height: 60%;
-            border-radius: 50%;
-            border: 2px solid #00ff00;
-            opacity: 0.3;
-        }
-        
-        .eth-symbol {
-            font-family: 'Orbitron', monospace;
-            font-size: 4rem;
-            font-weight: 900;
-            color: #00ff00;
-            text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
-            transform: rotate(0deg);
-            animation: symbolGlow 3s ease-in-out infinite;
-        }
-        
-        .eth-symbol small {
-            font-size: 1.5rem;
-            vertical-align: super;
-        }
-        
-        @keyframes symbolGlow {
-            0%, 100% { text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; opacity: 1; }
-            50% { text-shadow: 0 0 50px #00ff00, 0 0 100px #00ff00; opacity: 0.9; }
-        }
-        
         /* Сканирующая линия */
         .scan-line {
             position: fixed;
@@ -245,6 +127,30 @@
             50% { opacity: 0.5; transform: scale(1.2); }
         }
         
+        .rgb-split {
+            position: relative;
+        }
+
+        .rgb-split::before,
+        .rgb-split::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .rgb-split::before {
+            background: rgba(255, 0, 0, 0.03);
+            transform: translate(2px, -2px);
+        }
+
+        .rgb-split::after {
+            background: rgba(0, 0, 255, 0.03);
+            transform: translate(-2px, 2px);
+}
         /* Статистика */
         .stats {
             display: grid;
@@ -335,7 +241,17 @@
             background: #00ff00;
             box-shadow: 0 0 10px #00ff00;
         }
-        
+        .flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #00ff00;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
         .terminal-line {
             font-size: 0.8rem;
             line-height: 1.8;
@@ -345,7 +261,7 @@
             font-family: 'Source Code Pro', monospace;
             border-left: 2px solid #00ff00;
             padding-left: 10px;
-            animation: fadeIn 0.3s;
+            animation: fadeIn 0.3s, flicker 0.1s infinite alternate;
         }
         
         @keyframes fadeIn {
@@ -496,45 +412,130 @@
                 height: 150px;
             }
         }
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* ниже всего */
+            pointer-events: none;
+        }
+        .glitch {
+            position: relative;
+            color: #00ff00;
+        }
+
+        /* Дубли текста */
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Красный сдвиг */
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 red;
+            animation: glitchTop 2s infinite linear alternate-reverse;
+        }
+
+        /* Синий сдвиг */
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 blue;
+            animation: glitchBottom 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitchTop {
+            0% { clip-path: inset(0 0 80% 0); }
+            20% { clip-path: inset(10% 0 60% 0); }
+            40% { clip-path: inset(30% 0 40% 0); }
+            60% { clip-path: inset(50% 0 20% 0); }
+            80% { clip-path: inset(70% 0 10% 0); }
+            100% { clip-path: inset(0 0 80% 0); }
+        }
+
+        @keyframes glitchBottom {
+            0% { clip-path: inset(80% 0 0 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 30% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(80% 0 0 0); }
+        }
+        body.glitch-active {
+            animation: screenGlitch 0.2s;
+        }
+
+        @keyframes screenGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 2px); }
+            40% { transform: translate(5px, -2px); }
+            60% { transform: translate(-3px, 1px); }
+            80% { transform: translate(3px, -1px); }
+            100% { transform: translate(0); }
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 3px
+            );
+            z-index: 2;
+        }
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.85; }
+        }
+        .site-name {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            letter-spacing: 20px;
+            color: #00ff00;
+            z-index: 3;
+
+            text-shadow:
+                0 0 10px #00ff00,
+                0 0 20px #00ff00;
+
+            opacity: 0.8;
+        }
+
+        /* лёгкое мерцание */
+        .site-name {
+            animation: nameFlicker 2s infinite alternate;
+        }
+
     </style>
 <script type="text/javascript" nonce="08a7565a0e7245c5ac324d10b67" src="//local.adguard.org?ts=1771922210523&amp;type=content-script&amp;dmn=cdn.discordapp.com&amp;url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F1239954705115774998%2F1475482725979783168%2Fdeepseek_html_20260223_f03f97.html%3Fex%3D699e4e9f%26is%3D699cfd1f%26hm%3D65c3c1d81a747332e8b7a6ff4cde4070fec440fc5644160eb60c62e1c4da0f64%26&amp;app=browser.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="08a7565a0e7245c5ac324d10b67" src="//local.adguard.org?ts=1771922210523&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
-    <!-- Фон с 3D монетами ETH -->
-    <div class="eth-background">
-
-        <!-- Левая монета -->
-        <div class="eth-coin-left">
-            <div class="coin-3d">
-                <div class="coin-face coin-face-front">
-                    <div class="eth-symbol">Ξ<small>ETH</small></div>
-                </div>
-                <div class="coin-face coin-face-back">
-                    <div class="eth-symbol">Ξ<small>ETH</small></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Правая монета -->
-        <div class="eth-coin-right">
-            <div class="coin-3d">
-                <div class="coin-face coin-face-front">
-                    <div class="eth-symbol">Ξ<small>ETH</small></div>
-                </div>
-                <div class="coin-face coin-face-back">
-                    <div class="eth-symbol">Ξ<small>ETH</small></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    
+    <div class="site-name lowpoly" data-text="solomka31">solomka31</div>
+    <canvas id="matrix"></canvas>
+    <div id="flash" class="flash"></div>
     <!-- Сканирующая линия -->
     <div class="scan-line"></div>
     
     <div class="container">
         <!-- Заголовок -->
         <div class="header">
-            <h1>Ξ ETHEREUM МАТРИЦА</h1>
+            <h1 class="glitch" data-text="Ξ ETHEREUM МАТРИЦА">
+                Ξ ETHEREUM МАТРИЦА
+            </h1>
             <div class="subtitle">БЛОКЧЕЙН МОНИТОР РЕАЛЬНОГО ВРЕМЕНИ</div>
         </div>
         
@@ -603,6 +604,17 @@
     </div>
 
     <script>
+        function randomGlitch() {
+            if (Math.random() > 0.92) {
+                document.body.classList.add('glitch-active');
+
+                setTimeout(() => {
+                    document.body.classList.remove('glitch-active');
+                }, 150);
+            }
+        }
+
+        setInterval(randomGlitch, 500);
         // Конфигурация
         const UPDATE_INTERVAL = 3000;
         const TERMINAL_SPEED = 800;
@@ -643,7 +655,47 @@
             }
             return hash;
         }
-        
+        function rgbGlitch() {
+            if (Math.random() > 0.95) {
+                document.body.classList.add('rgb-split');
+
+                setTimeout(() => {
+                    document.body.classList.remove('rgb-split');
+                }, 200);
+            }
+        }
+
+        setInterval(rgbGlitch, 400);
+                function corruptText(element) {
+            const original = element.innerText;
+            const chars = '!@#$%^&*()_+-=<>?/[]{}|';
+
+            let iterations = 0;
+
+            const interval = setInterval(() => {
+                element.innerText = original
+                    .split('')
+                    .map((char, i) => {
+                        if (i < iterations) return original[i];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join('');
+
+                if (iterations >= original.length) {
+                    clearInterval(interval);
+                    element.innerText = original;
+                }
+
+                iterations += 1 / 2;
+            }, 30);
+        }
+
+        // случайный запуск
+        setInterval(() => {
+            if (Math.random() > 0.97) {
+                corruptText(document.querySelector('h1'));
+            }
+        }, 1000);
         // Создание куба
         function createCube() {
             const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
@@ -772,8 +824,76 @@
             // Добавление сообщений в терминал
             setInterval(addTerminalLine, TERMINAL_SPEED);
         }
-        
+        const flash = document.getElementById('flash');
+
+        function flashGlitch() {
+            if (Math.random() > 0.97) {
+                flash.style.opacity = 0.15;
+
+                setTimeout(() => {
+                    flash.style.opacity = 0;
+                }, 50);
+            }
+        }
+
+        setInterval(flashGlitch, 700);
         // Запуск
+        // MATRIX EFFECT
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+
+        const drops = [];
+
+        // начальные позиции
+        for (let x = 0; x < columns; x++) {
+            drops[x] = Math.random() * canvas.height;
+        }
+
+        function drawMatrix() {
+            // затемнение (шлейф)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.setTransform(
+                1,
+                Math.random() * 0.02,
+                Math.random() * 0.02,
+                1,
+                0,
+                0
+            );
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            ctx.fillStyle = '#00ff00';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i]);
+
+                // сброс вниз
+                if (drops[i] > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i] += fontSize;
+            }
+        }
+
+        // анимация
+        setInterval(drawMatrix, 33);
+
+        // адаптив
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
         window.onload = init;
     </script>
 </body>
